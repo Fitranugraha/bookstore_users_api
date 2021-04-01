@@ -5,9 +5,7 @@ import (
 	"github.com/fitranugraha/bookstore_users_api/utils/errors"
 )
 
-var (
-	usersDB = make(map[int64]*User)
-)
+var usersDB = make(map[int64]*User)
 
 func (user *User) Get() *errors.RestErr {
 	result := usersDB[user.Id]
@@ -20,22 +18,17 @@ func (user *User) Get() *errors.RestErr {
 	user.LastName = result.LastName
 	user.Email = result.Email
 	user.DateCreated = result.DateCreated
-
 	return nil
 }
 
-func (user *User) Save() *errors.RestErr {
-	fmt.Println("dd")
+func (user *User) Save() *errors.RestErr{
 	current := usersDB[user.Id]
 	if current != nil {
-		fmt.Println("Nilai current:", current)
-		//if current.Email == user.Email {
-		//	return errors.NewBadRequestError(fmt.Sprintf("email %s already exist", user.Email))
-		//}
-		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists", user.Id))
+		if current.Email == user.Email {
+			return errors.NewBadRequestError(fmt.Sprintf("email %s is already registered", user.Email))
+		}
+		return errors.NewBadRequestError(fmt.Sprintf("user %d already exist", user.Id))
 	}
-	fmt.Println("Nilai current:", current)
 	usersDB[user.Id] = user
 	return nil
 }
-

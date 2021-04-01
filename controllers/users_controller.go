@@ -1,7 +1,6 @@
-package users
+package controllers
 
 import (
-	"fmt"
 	"github.com/fitranugraha/bookstore_users_api/domain/users"
 	"github.com/fitranugraha/bookstore_users_api/services"
 	"github.com/fitranugraha/bookstore_users_api/utils/errors"
@@ -10,14 +9,11 @@ import (
 	"strconv"
 )
 
-
-
 func CreateUser(c *gin.Context) {
 	var user users.User
 
-	if err := c.ShouldBindJSON(&user); err != nil {
-		restErr := errors.NewBadRequestError("invalid json body")
-		fmt.Println(err)
+	if err := c.ShouldBindJSON(&user); err!=nil {
+		restErr := errors.NewBadRequestError("Invalid Json Body")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
@@ -27,24 +23,23 @@ func CreateUser(c *gin.Context) {
 		c.JSON(saveErr.Status, saveErr)
 		return
 	}
+
 	c.JSON(http.StatusCreated, result)
 }
 
-func GetUser(c *gin.Context) {
+func GetUser(c *gin.Context){
 	userId, userErr := strconv.ParseInt(c.Param("user_id"),10,64)
 	if userErr != nil {
-		err := errors.NewBadRequestError("user id should be number")
-		c.JSON(http.StatusBadRequest,err)
+		err := errors.NewBadRequestError("user id should be a number")
+		c.JSON(err.Status, err)
 		return
 	}
-
 	user, getErr := services.GetUser(userId)
 	if getErr != nil {
-		c.JSON(getErr.Status,getErr)
+		c.JSON(getErr.Status, getErr)
 		return
 	}
-
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusCreated,user)
 }
 
 
